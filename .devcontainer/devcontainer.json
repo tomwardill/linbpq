@@ -11,10 +11,17 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-vscode.cpptools-extension-pack"
+				"ms-vscode.cpptools-extension-pack",
+				"donjayamanne.git-extension-pack",
+				"donjayamanne.githistory",
+				"GitHub.copilot",
+				"eamodio.gitlens",
+				"VisualStudioExptTeam.vscodeintellicode",
+				"ms-vscode.makefile-tools"
 			]
 		}
-	}
+	},
+	"runArgs": [ "--cap-add=SYS_PTRACE", "--cap-add=cap_net_admin", "--cap-add=cap_net_raw", "--cap-add=cap_net_bind_service", "--security-opt", "seccomp=unconfined" ]
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
