@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
-*/	
+*/
 
 
 
@@ -28,6 +28,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "mqtt.h"
 
 #pragma data_seg("_BPQDATA")
 
@@ -39,6 +40,7 @@ extern struct CONFIGTABLE xxcfg;
 
 #define LIBCONFIG_STATIC
 #include "libconfig.h"
+
 
 #ifndef LINBPQ
 
@@ -204,7 +206,7 @@ void _CheckGuardZone(char * File, int Line)
 	while (n--)
 	{
 		Test = (PMESSAGE)Bufferlist[n];
-	
+
 		if (Test && Test->GuardZone)
 		{
 			Debugprintf("CheckGuardZone %p GUARD ZONE CORRUPT %d Called from %s Line %d", Test, Test->Process, File, Line);
@@ -215,10 +217,10 @@ void _CheckGuardZone(char * File, int Line)
 			while (offset < 400)
 			{
 				memcpy(CodeDump, &ptr[offset], 32);
-	
+
 				for (i = 0; i < 8; i++)
 					CodeDump[i] = htonl(CodeDump[i]);
-	
+
 				Debugprintf("%08x %08x %08x %08x %08x %08x %08x %08x %08x ",
 					&ptr[offset], CodeDump[0], CodeDump[1], CodeDump[2], CodeDump[3], CodeDump[4], CodeDump[5], CodeDump[6], CodeDump[7]);
 
@@ -307,7 +309,7 @@ BOK1:
 
 	while (pointer)
 	{
-		// Validate pointer to make sure it is in pool - it may be a duff address if Q is corrupt 
+		// Validate pointer to make sure it is in pool - it may be a duff address if Q is corrupt
 
 		Test = (PMESSAGE)pointer;
 
@@ -320,7 +322,7 @@ BOK1:
 			memcpy(CodeDump, debug, 64);
 
 			Debugprintf("Releasebuffer Pool Corruption n = %d, ptr %p prev %p", n, pointer, debug);
-	
+
 			for (i = 0; i < 16; i++)
 			{
 				rev = (CodeDump[i] & 0xff) << 24;
@@ -336,14 +338,14 @@ BOK1:
 
 			Debugprintf("         %08x %08x %08x %08x %08x %08x %08x %08x",
 				CodeDump[8], CodeDump[9], CodeDump[10], CodeDump[11], CodeDump[12], CodeDump[13], CodeDump[14], CodeDump[15]);
-					
+
 			if (debug[400])
 				Debugprintf("         %s", &debug[400]);
 
 		}
 
 		// See if already on free Queue
-	
+
 		if (pointer == BUFF)
 		{
 			Debugprintf("Trying to free buffer %p when already on FREE_Q called from %s Line %d", BUFF, File, Line);
@@ -740,7 +742,7 @@ VOID CheckForDetach(struct TNCINFO * TNC, int Stream, struct STREAMINFO * STREAM
 				Duration = time(NULL) - STREAM->ConnectTime;
 
 				if (Duration == 0)
-					Duration = 1;				// Or will get divide by zero error 
+					Duration = 1;				// Or will get divide by zero error
 
 				sprintf(logmsg,"Port %2d %9s Bytes Sent %d  BPS %d Bytes Received %d BPS %d Time %d Seconds",
 					TNC->Port, STREAM->RemoteCall,
@@ -920,7 +922,7 @@ BOOL ProcessIncommingConnectEx(struct TNCINFO * TNC, char * Call, int Stream, BO
 	int Totallen = 0;
 	UCHAR * ptr;
 	struct PORTCONTROL * PORT = (struct PORTCONTROL *)TNC->PortRecord;
-	
+
 	// Stop Scanner
 
 	if (Stream == 0 || TNC->Hardware == H_UZ7HO)
@@ -1013,7 +1015,7 @@ BOOL ProcessIncommingConnectEx(struct TNCINFO * TNC, char * Call, int Stream, BO
 
 		if (Totallen < sendLen)
 			sendLen = Totallen;
-			
+
 		buffptr = (PMSGWITHLEN)GetBuff();
 		if (buffptr == 0) return TRUE;			// No buffers
 
@@ -1126,7 +1128,7 @@ VOID DigiToMultiplePorts(struct PORTCONTROL * PORTVEC, PMESSAGE Msg)
 
 int CompareAlias(struct DEST_LIST ** a, struct DEST_LIST ** b)
 {
-	return memcmp(a[0]->DEST_ALIAS, b[0]->DEST_ALIAS, 6); 
+	return memcmp(a[0]->DEST_ALIAS, b[0]->DEST_ALIAS, 6);
 	/* strcmp functions works exactly as expected from comparison function */
 }
 
@@ -2173,7 +2175,7 @@ int OpenCOMMPort(struct TNCINFO * conn, char * Port, int Speed, BOOL Quiet)
 	}
 
 	sprintf(conn->WEB_COMMSSTATE,"%s Open", Port);
-	
+
 	if (conn->xIDC_COMMSSTATE)
 		SetWindowText(conn->xIDC_COMMSSTATE, conn->WEB_COMMSSTATE);
 
@@ -2283,7 +2285,7 @@ HANDLE OpenCOMPort(char * pPort, int speed, BOOL SetDTR, BOOL SetRTS, BOOL Quiet
 			EscapeCommFunction(fd, SETDTR);
 		else
 			EscapeCommFunction(fd, CLRDTR);
-	
+
 		if (SetRTS)
 			EscapeCommFunction(fd, SETRTS);
 		else
@@ -2575,7 +2577,7 @@ int ReadCOMBlockEx(HANDLE fd, char * Block, int MaxLength, BOOL * Error)
 BOOL WriteCOMBlock(HANDLE fd, char * Block, int BytesToWrite)
 {
 	//	Some systems seem to have a very small max write size
-	
+
 	int ToSend = BytesToWrite;
 	int Sent = 0, ret;
 	int loops = 100;
@@ -2591,11 +2593,11 @@ BOOL WriteCOMBlock(HANDLE fd, char * Block, int BytesToWrite)
 		{
 			if (errno != 11 && errno != 35)					// Would Block
 				return FALSE;
-	
+
 			usleep(10000);
 			ret = 0;
 		}
-						
+
 		Sent += ret;
 		ToSend -= ret;
 	}
@@ -2826,7 +2828,7 @@ void SaveMH()
 	char FN[250];
 	struct PORTCONTROL * PORT = PORTTABLE;
 	FILE *file;
-	
+
 	if (BPQDirectory[0] == 0)
 	{
 		strcpy(FN, "MHSave.txt");
@@ -2842,10 +2844,10 @@ void SaveMH()
 		return;
 
 	while (PORT)
-	{	
+	{
 		int Port = 0;
 		char * ptr;
-	
+
 		MHSTRUC * MH = PORT->PORTMHEARD;
 
 		int count = MHENTRIES;
@@ -2860,19 +2862,19 @@ void SaveMH()
 
 		// Note that the MHDIGIS field may contain rubbish. You have to check End of Address bit to find
 		// how many digis there are
-	
+
 		if (MH == NULL)
 			continue;
-		
+
 		fprintf(file, "Port:%d\n", PORT->PORTNUMBER);
-	
+
 		while (count--)
 		{
 			if (MH->MHCALL[0] == 0)
 				break;
 
 			Digi = 0;
-		
+
 			len = ConvFromAX25(MH->MHCALL, Normcall);
 			Normcall[len] = 0;
 
@@ -2888,14 +2890,14 @@ void SaveMH()
 
 				strcpy(Output, "via ");
 				Output += 4;
-		
+
 				while ((*ptr & 1) == 0)
 				{
 					//	MORE TO COME
-	
+
 					From[ConvFromAX25(ptr + 1, From)] = 0;
 					Output += sprintf((char *)Output, "%s", From);
-	
+
 					ptr += 7;
 					n--;
 
@@ -2918,14 +2920,14 @@ void SaveMH()
 								*(Output++) = '*';			// No, so need *
 								Digi = '*';
 							}
-					
+
 
 					}
 					*(Output++) = ',';
-				}		
+				}
 				*(--Output) = 0;							// remove last comma
 			}
-			else 
+			else
 				*(Output) = 0;
 
 			// if we used a digi set * on call and display via string
@@ -2941,7 +2943,7 @@ void SaveMH()
 			ptr = FormatMH(MH, 'U');
 
 			ptr[15] = 0;
-		
+
 			if (MH->MHDIGI)
 				fprintf(file, "%d %6d %-10s%c %s %s|%s|%s\n", (int)MH->MHTIME, MH->MHCOUNT, Normcall, MH->MHDIGI, ptr, DigiList, MH->MHLocator, MH->MHFreq);
 			else
@@ -3132,7 +3134,7 @@ Dll BOOL APIENTRY CheckOneTimePassword(char * Password, char * KeyPhrase)
 DllExport BOOL ConvToAX25Ex(unsigned char * callsign, unsigned char * ax25call)
 {
 	// Allows SSID's of 'T and 'R'
-	
+
 	int i;
 
 	memset(ax25call,0x40,6);		// in case short
@@ -3145,7 +3147,7 @@ DllExport BOOL ConvToAX25Ex(unsigned char * callsign, unsigned char * ax25call)
 			//
 			//	process ssid and return
 			//
-			
+
 			if (callsign[i+1] == 'T')
 			{
 				ax25call[6]=0x42;
@@ -3413,10 +3415,10 @@ VOID SendNETROMRoute(struct PORTCONTROL * PORT, unsigned char * axcall)
 
 	if (Now - TimeLastNRRouteSent > 60)
 		NeedSend = TRUE;
-	
+
 	if (strstr(NRRouteMessage, Report) == 0)	//  reported recently
 		strcat(NRRouteMessage, Report);
-		
+
 	if (strlen(NRRouteMessage) > 230 || NeedSend)
 	{
 		Len = sprintf(Msg, "LINK %s", NRRouteMessage);
@@ -3716,6 +3718,10 @@ VOID OpenReportingSockets()
 	Chatreportdest.sin_port = htons(81);
 
 	_beginthread(ResolveUpdateThread, 0, NULL);
+
+	if (xxcfg.C_MQTT) {
+		MQTTConnect(xxcfg.C_MQTT_HOST, xxcfg.C_MQTT_PORT, xxcfg.C_MQTT_USER, xxcfg.C_MQTT_PASS);
+	}
 }
 
 VOID WriteMiniDumpThread();
@@ -3867,7 +3873,7 @@ int UIRemoveLF(char * Message, int len)
 	while (len-- > 0)
 	{
 		*ptr2 = *ptr1;
-	
+
 		if (*ptr1 == '\r')
 			if (*(ptr1+1) == '\n')
 			{
@@ -3915,7 +3921,7 @@ VOID UISend_AX_Datagram(UCHAR * Msg, DWORD Len, UCHAR Port, UCHAR * HWADDR, BOOL
 		UCHAR * ptr;
 
 		memcpy(&AXPTR->CTL, UIUIDigiAX[Port], DigiLen);
-		
+
 		ptr = (UCHAR *)AXPTR;
 		ptr += DigiLen;
 		AXPTR = (PMESSAGEX)ptr;
@@ -3950,12 +3956,12 @@ VOID SendUIBeacon(int Port)
 		FILE * hFile;
 
 		hFile = fopen(FN[Port], "rb");
-	
+
 		if (hFile == 0)
 			return;
 
-		Len = (int)fread(UIMessage, 1, 1024, hFile); 
-		
+		Len = (int)fread(UIMessage, 1, 1024, hFile);
+
 		fclose(hFile);
 
 	}
@@ -4019,7 +4025,7 @@ HWND hwndDisplay;
 #define IDC_PORTNAME                    1060
 
 extern HKEY REGTREE;
-HBRUSH bgBrush; 
+HBRUSH bgBrush;
 
 VOID SetupUI(int Port)
 {
@@ -4056,7 +4062,7 @@ VOID SetupUI(int Port)
 VOID SaveIntValue(config_setting_t * group, char * name, int value)
 {
 	config_setting_t *setting;
-	
+
 	setting = config_setting_add(group, name, CONFIG_TYPE_INT);
 	if(setting)
 		config_setting_set_int(setting, value);
@@ -4094,7 +4100,7 @@ VOID SaveUIConfig()
 	}
 
 	//	Get rid of old config before saving
-	
+
 	config_init(&cfg);
 
 	root = config_root_setting(&cfg);
@@ -4106,15 +4112,15 @@ VOID SaveUIConfig()
 	for (Port = 1; Port <= MaxPort; Port++)
 	{
 		char Key[20];
-		
-		sprintf(Key, "Port%d", Port); 
+
+		sprintf(Key, "Port%d", Port);
 		group = config_setting_add(UIGroup, Key, CONFIG_TYPE_GROUP);
 
 		SaveStringValue(group, "UIDEST", &UIUIDEST[Port][0]);
 		SaveStringValue(group, "FileName", &FN[Port][0]);
 		SaveStringValue(group, "Message", &Message[Port][0]);
 		SaveStringValue(group, "Digis", UIUIDigi[Port]);
-	
+
 		SaveIntValue(group, "Interval", Interval[Port]);
 		SaveIntValue(group, "SendFromFile", SendFromFile[Port]);
 	}
@@ -4161,7 +4167,7 @@ VOID GetUIConfig()
 	{
 		// No file. If Windows try to read from registy
 
-#ifndef LINBPQ 
+#ifndef LINBPQ
 		GetRegConfig();
 #else
 		Debugprintf("UIUtil Config File not found\n");
@@ -4182,8 +4188,8 @@ VOID GetUIConfig()
 	if (group)
 	{
 		for (Port = 1; Port <= MaxPort; Port++)
-		{	
-			sprintf(Key, "main.UIUtil.Port%d", Port); 
+		{
+			sprintf(Key, "main.UIUtil.Port%d", Port);
 
 			group = config_lookup (&cfg, Key);
 
@@ -4194,7 +4200,7 @@ VOID GetUIConfig()
 				GetStringValue(group, "Message", &Message[Port][0]);
 				GetStringValue(group, "Digis", Digis);
 				UIUIDigi[Port] = _strdup(Digis);
-	
+
 				Interval[Port] = GetIntValue(group, "Interval");
 				MinCounter[Port] = Interval[Port];
 
@@ -4248,14 +4254,14 @@ int GetRegConfig()
 	RECT Rect;
 
 	wsprintf(Key, "SOFTWARE\\G8BPQ\\BPQ32\\UIUtil");
-	
+
 	retCode = RegOpenKeyEx (REGTREE, Key, 0, KEY_QUERY_VALUE, &hKey);
 
 	if (retCode == ERROR_SUCCESS)
 	{
 		Vallen=80;
 
-		retCode = RegQueryValueEx(hKey,"Size",0,			
+		retCode = RegQueryValueEx(hKey,"Size",0,
 			(ULONG *)&Type,(UCHAR *)&Size,(ULONG *)&Vallen);
 
 		if (retCode == ERROR_SUCCESS)
@@ -4275,26 +4281,26 @@ int GetRegConfig()
                               &hKey);
 
 		if (retCode == ERROR_SUCCESS)
-		{	
+		{
 			Vallen=0;
-			RegQueryValueEx(hKey,"Digis",0,			
+			RegQueryValueEx(hKey,"Digis",0,
 				(ULONG *)&Type, NULL, (ULONG *)&Vallen);
 
 			if (Vallen)
 			{
 				UIUIDigi[i] = malloc(Vallen);
-				RegQueryValueEx(hKey,"Digis",0,			
+				RegQueryValueEx(hKey,"Digis",0,
 					(ULONG *)&Type, UIUIDigi[i], (ULONG *)&Vallen);
 			}
 
 			Vallen=4;
-			retCode = RegQueryValueEx(hKey, "Interval", 0,			
+			retCode = RegQueryValueEx(hKey, "Interval", 0,
 				(ULONG *)&Type, (UCHAR *)&Interval[i], (ULONG *)&Vallen);
 
 			MinCounter[i] = Interval[i];
 
 			Vallen=4;
-			retCode = RegQueryValueEx(hKey, "SendFromFile", 0,			
+			retCode = RegQueryValueEx(hKey, "SendFromFile", 0,
 				(ULONG *)&Type, (UCHAR *)&SendFromFile[i], (ULONG *)&Vallen);
 
 
@@ -4406,14 +4412,14 @@ INT_PTR CALLBACK ChildDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 				UIUIDigiAX[Port] = NULL;
 			}
 
-			GetDlgItemText(hDlg, IDC_UIDIGIS, Digis, 99); 
-		
+			GetDlgItemText(hDlg, IDC_UIDIGIS, Digis, 99);
+
 			UIUIDigi[Port] = _strdup(Digis);
-		
-			GetDlgItemText(hDlg, IDC_FILENAME, &FN[Port][0], 255); 
-			GetDlgItemText(hDlg, IDC_MESSAGE, &Message[Port][0], 1000); 
-	
-			Interval[Port] = GetDlgItemInt(hDlg, IDC_INTERVAL, &OK, FALSE); 
+
+			GetDlgItemText(hDlg, IDC_FILENAME, &FN[Port][0], 255);
+			GetDlgItemText(hDlg, IDC_MESSAGE, &Message[Port][0], 1000);
+
+			Interval[Port] = GetDlgItemInt(hDlg, IDC_INTERVAL, &OK, FALSE);
 
 			MinCounter[Port] = Interval[Port];
 
@@ -4423,7 +4429,7 @@ INT_PTR CALLBACK ChildDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 
 			retCode = RegCreateKeyEx(REGTREE,
 					Key, 0, 0, 0, KEY_ALL_ACCESS, NULL, &hKey, &disp);
-	
+
 			if (retCode == ERROR_SUCCESS)
 			{
 				retCode = RegSetValueEx(hKey, "UIDEST", 0, REG_SZ,(BYTE *)&UIUIDEST[Port][0], (int)strlen(&UIUIDEST[Port][0]));
@@ -4456,7 +4462,7 @@ INT_PTR CALLBACK ChildDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 		}
 		break;
 
-	}	
+	}
 	return (INT_PTR)FALSE;
 }
 
@@ -4524,7 +4530,7 @@ VOID WINAPI OnTabbedDialogInit(HWND hDlg)
 
 		tie.pszText = PortNo;
 		TabCtrl_InsertItem(pHdr->hwndTab, tab, &tie);
-	
+
 		pHdr->apRes[tab++] = DoLockDlgRes("PORTPAGE");
 	}
 
@@ -4574,7 +4580,7 @@ VOID WINAPI OnTabbedDialogInit(HWND hDlg)
 
 	pos=rcTab.left+cxMargin;
 
-	
+
 	// Size the dialog box.
 
 	SetWindowPos(hwndDlg, NULL, 0, 0, rcTab.right + cyMargin + 2 * GetSystemMetrics(SM_CXDLGFRAME),
@@ -4673,7 +4679,7 @@ LRESULT CALLBACK UIWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 	int wmId, wmEvent;
 	HKEY hKey=0;
 
-	switch (message) { 
+	switch (message) {
 
 	case WM_INITDIALOG:
 		OnTabbedDialogInit(hWnd);
@@ -4734,15 +4740,15 @@ LRESULT CALLBACK UIWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 
 			return (DefWindowProc(hWnd, message, wParam, lParam));
 
-		case  SC_MINIMIZE: 
-			
+		case  SC_MINIMIZE:
+
 			if (MinimizetoTray)
 				return ShowWindow(hWnd, SW_HIDE);
 			else
 				return (DefWindowProc(hWnd, message, wParam, lParam));
-						
+
 			break;
-		
+
 		default:
 				return (DefWindowProc(hWnd, message, wParam, lParam));
 		}
@@ -4795,13 +4801,13 @@ void GetPortCTEXT(TRANSPORTENTRY * Session, char * Bufferptr, char * CmdTail, CM
 		if (hFile)
 		{
 			char * ptr;
-			
+
 			PORT->CTEXT = zalloc(STAT.st_size + 1);
-			fread(PORT->CTEXT , 1, STAT.st_size, hFile); 
+			fread(PORT->CTEXT , 1, STAT.st_size, hFile);
 			fclose(hFile);
-			
+
 			// convert CRLF or LF to CR
-	
+
 			while (ptr = strstr(PORT->CTEXT, "\r\n"))
 				memmove(ptr, ptr + 1, strlen(ptr));
 
@@ -4818,7 +4824,7 @@ void GetPortCTEXT(TRANSPORTENTRY * Session, char * Bufferptr, char * CmdTail, CM
 	}
 
 	if (Session)
-	{	
+	{
 		Bufferptr = Cmdprintf(Session, Bufferptr, "CTEXT Read for ports %s\r", &PortList[1]);
 		SendCommandReply(Session, REPLYBUFFER, (int)(Bufferptr - (char *)REPLYBUFFER));
 	}
@@ -4832,7 +4838,7 @@ void GetPortCTEXT(TRANSPORTENTRY * Session, char * Bufferptr, char * CmdTail, CM
 // Used for various reporting functions - MH, Maps, BBS New User message,
 
 // I think I'll try PORT "PortFreq" setting first then if that isn't available  via rigcontrol.
-// 
+//
 // For now at least will report dial freq if using RIGCONTROL
 
 DllExport uint64_t APIENTRY GetPortFrequency(int PortNo, char * FreqString)
@@ -4845,7 +4851,7 @@ DllExport uint64_t APIENTRY GetPortFrequency(int PortNo, char * FreqString)
 	int  n = 3;
 
 	FreqString[0] = 0;
-	
+
 	if (PORT == 0)
 		return 0;
 
@@ -4869,7 +4875,7 @@ DllExport uint64_t APIENTRY GetPortFrequency(int PortNo, char * FreqString)
 
 		if (TNC)
 			RIG = TNC->RIG;
-		
+
 		if (RIG == 0)
 			return 0;
 
@@ -4898,20 +4904,20 @@ SOCKET OpenHTTPSock(char * Host)
 {
 	SOCKET sock = 0;
 	struct sockaddr_in destaddr;
-	struct sockaddr_in sinx; 
+	struct sockaddr_in sinx;
 	int addrlen=sizeof(sinx);
 	struct hostent * HostEnt;
 	int err;
 	u_long param=1;
 	BOOL bcopt=TRUE;
-		
-	destaddr.sin_family = AF_INET; 
+
+	destaddr.sin_family = AF_INET;
 	destaddr.sin_port = htons(80);
 
 	//	Resolve name to address
 
 	HostEnt = gethostbyname (Host);
-		 
+
 	if (!HostEnt)
 	{
 		err = WSAGetLastError();
@@ -4919,16 +4925,16 @@ SOCKET OpenHTTPSock(char * Host)
 		Debugprintf("Resolve Failed for %s %d %x", "api.winlink.org", err, err);
 		return 0 ;			// Resolve failed
 	}
-	
-	memcpy(&destaddr.sin_addr.s_addr,HostEnt->h_addr,4);	
-	
+
+	memcpy(&destaddr.sin_addr.s_addr,HostEnt->h_addr,4);
+
 	//   Allocate a Socket entry
 
 	sock = socket(AF_INET,SOCK_STREAM,0);
 
 	if (sock == INVALID_SOCKET)
-  	 	return 0; 
- 
+  	 	return 0;
+
 	setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, (const char FAR *)&bcopt,4);
 
 	sinx.sin_family = AF_INET;
@@ -4936,7 +4942,7 @@ SOCKET OpenHTTPSock(char * Host)
 	sinx.sin_port = 0;
 
 	if (bind(sock, (struct sockaddr *) &sinx, addrlen) != 0 )
-  	 	return FALSE; 
+  	 	return FALSE;
 
 	if (connect(sock,(struct sockaddr *) &destaddr, sizeof(destaddr)) != 0)
 	{
@@ -5000,7 +5006,7 @@ VOID SendWebRequest(SOCKET sock, char * Host, char * Request, char * Params, int
 		inptr += InputLen;
 
 		Buffer[inptr] = 0;
-		
+
 		ptr = strstr(Buffer, "\r\n\r\n");
 
 		if (ptr)
@@ -5008,7 +5014,7 @@ VOID SendWebRequest(SOCKET sock, char * Host, char * Request, char * Params, int
 			// got header
 
 			int Hddrlen = (int)(ptr - Buffer);
-					
+
 			ptr1 = strstr(Buffer, "Content-Length:");
 
 			if (ptr1)
@@ -5025,12 +5031,12 @@ VOID SendWebRequest(SOCKET sock, char * Host, char * Request, char * Params, int
 					{
 						if (Return)
 						{
-							memcpy(Return, ptr + 4, ContentLen); 
+							memcpy(Return, ptr + 4, ContentLen);
 							Return[ContentLen] = 0;
 						}
 						else
 							Debugprintf("Map Database update ok");
-					
+
 					}
 					else
 					{
@@ -5045,7 +5051,7 @@ VOID SendWebRequest(SOCKET sock, char * Host, char * Request, char * Params, int
 			else
 			{
 				ptr1 = strstr(_strlwr(Buffer), "transfer-encoding:");
-				
+
 				if (ptr1)
 				{
 					// Just accept anything until I've sorted things with Lee
@@ -5118,7 +5124,7 @@ void BuildPortMH(char * MHJSON, struct PORTCONTROL * PORT)
 		for (i=0; i < len; i++)
 		{
 			c = Normcall[i];
-			
+
 			if (!isalnum(c) && !(c == '#') && !(c == ' ') && !(c == '-'))
 				goto skipit;
 		}
@@ -5239,7 +5245,7 @@ void SendDataToPktMap(char *Msg)
 	{
 		PortNo = PORT->PORTNUMBER;
 
-		if (PORT->Hide) 
+		if (PORT->Hide)
 		{
 			PORT = PORT->PORTPOINTER;
 			continue;
@@ -5291,7 +5297,7 @@ void SendDataToPktMap(char *Msg)
 
 			if (Port)
 			{
-				// KISS like - see if connected 
+				// KISS like - see if connected
 
 				if (PORT->PORTIPADDR.s_addr || PORT->KISSSLAVE)
 				{
@@ -5308,11 +5314,11 @@ void SendDataToPktMap(char *Msg)
 				else
 					if (Port->idComDev)			// Serial port Open
 						Active = 1;
-				
+
 				PORT = SAVEPORT;
-			}		
+			}
 		}
-		else if (PORT->PORTTYPE == 14)		// Loopback 
+		else if (PORT->PORTTYPE == 14)		// Loopback
 			Active = 0;
 
 		else if (PORT->PORTTYPE == 16)		// External
@@ -5348,7 +5354,7 @@ void SendDataToPktMap(char *Msg)
 				case H_SCS:
 				case H_TRK:
 				case H_WINRPR:
-			
+
 					if (TNC->HostMode)
 						Active = 1;
 
@@ -5496,7 +5502,7 @@ void SendDataToPktMap(char *Msg)
 			ptr += sprintf(ptr, "{\"id\": \"%d\",\"linkType\": \"%s\","
 			"\"freq\": \"%lld\",\"mode\": \"%s\",\"modulation\": \"%s\","
 			"\"baud\": \"%d\",\"bitrate\": \"%d\",\"usage\": \"%s\",\"comment\": \"%s\"},\r\n",
-			PortNo, Type, 
+			PortNo, Type,
 			Freq, Mode, Modulation,
 			Baud, Bitrate, Usage, ID);
 

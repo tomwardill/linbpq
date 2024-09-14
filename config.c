@@ -1156,16 +1156,19 @@ NextAPRS:
 	if (_memicmp("MQTT_HOST=", rec, 10) == 0)
 	{
 		strcpy(xxcfg.C_MQTT_HOST, &rec[10]);
+		xxcfg.C_MQTT_HOST[strlen(xxcfg.C_MQTT_HOST)-1] = '\0';
 		return 0;
 	}
 	if (_memicmp("MQTT_USER=", rec, 10) == 0)
 	{
 		strcpy(xxcfg.C_MQTT_USER, &rec[10]);
+		xxcfg.C_MQTT_USER[strlen(xxcfg.C_MQTT_USER)-1] = '\0';
 		return 0;
 	}
 	if (_memicmp("MQTT_PASS=", rec, 10) == 0)
 	{
 		strcpy(xxcfg.C_MQTT_PASS, &rec[10]);
+		xxcfg.C_MQTT_PASS[strlen(xxcfg.C_MQTT_PASS)-1] = '\0';
 		return 0;
 	}
 
