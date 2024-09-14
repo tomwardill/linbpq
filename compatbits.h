@@ -19,7 +19,7 @@ Stuff to make compiling on WINDOWS and LINUX easier
 
 #ifdef WIN32
 
-#define _CRT_SECURE_NO_DEPRECATE 
+#define _CRT_SECURE_NO_DEPRECATE
 #include <crtdbg.h>
 
 #define strtoll _strtoi64
@@ -58,7 +58,7 @@ int Sleep(int ms);
 #define ioctlsocket ioctl
 
 #define Dll
-#define DllExport 
+#define DllExport
 
 #include <unistd.h>
 #include <time.h>
@@ -135,7 +135,7 @@ typedef DWORD   COLORREF;
 
 #define _gcvt gcvt
 #define _fcvt fcvt
-#define _atoi64 atoll 
+#define _atoi64 atoll
 
 #define DeleteFile unlink
 #define MoveFile rename
@@ -157,7 +157,7 @@ pthread_t _beginthread(void(*start_address)(), unsigned stack_size, VOID * argli
 
 
 #define WSAGetLastError() errno
-#define GetLastError() errno 
+#define GetLastError() errno
 void closesocket(int sock);
 #define GetCurrentProcessId getpid
 #define GetCurrentThreadId pthread_self
