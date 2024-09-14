@@ -19,4 +19,5 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
      libminiupnpc-dev \
      libminiupnpc17 \
      libconfig-dev \
-     libpcap-dev
+     libpcap-dev \
+     libpaho-mqtt-dev
