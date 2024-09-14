@@ -343,7 +343,7 @@ static int routine[] =
 14, 14 ,14, 14,
 15, 0, 2, 9, 9,
 2, 2, 2, 2, 2, 2,
-2, 2, 20, 1, 20, 20} ;			// Routine to process param
+2, 2, 0, 1, 20, 20} ;			// Routine to process param
 
 int PARAMLIM = sizeof(routine)/sizeof(int);
 //int NUMBEROFKEYWORDS = sizeof(routine)/sizeof(int);
@@ -1153,6 +1153,22 @@ NextAPRS:
 		return 0;
 	}
 
+	if (_memicmp("MQTT_HOST=", rec, 10) == 0)
+	{
+		strcpy(xxcfg.C_MQTT_HOST, &rec[10]);
+		return 0;
+	}
+	if (_memicmp("MQTT_USER=", rec, 10) == 0)
+	{
+		strcpy(xxcfg.C_MQTT_USER, &rec[10]);
+		return 0;
+	}
+	if (_memicmp("MQTT_PASS=", rec, 10) == 0)
+	{
+		strcpy(xxcfg.C_MQTT_PASS, &rec[10]);
+		return 0;
+	}
+
 
 	if (xindex(rec,"=") >= 0)
 	   sscanf(rec,"%[^=]=%s",key_word,value);
@@ -1243,6 +1259,7 @@ NextAPRS:
 			cn = dotext((char *)offset[i], key_word, 120);             /* BTEXT */
 			break;
 	     }
+
 
 		paramok[i] = cn;
 	}
