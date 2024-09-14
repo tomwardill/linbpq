@@ -10,22 +10,22 @@ void onConnect(void* context, MQTTAsync_successData* response)
         MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
         int rc;
 
-        printf("Successful connection\n");
+        printf("Successful MQTT connection\n");
 }
 
 void onConnectFailure(void* context, MQTTAsync_failureData* response)
 {
-        printf("Connect failed, rc %d\n", response ? response->code : 0);
+        printf("MQTT connection failed, rc %d\n", response ? response->code : 0);
 }
 
 
-int MQTTConnect(char * Host, int Port, char * User, char * Pass)
+int MQTTConnect(char* host, int port, char* user, char* pass)
 {
     MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer;
     int rc;
 
     char* hostString;
-    asprintf(&hostString, "tcp://%s:%d", Host, Port);
+    asprintf(&hostString, "tcp://%s:%d", host, port);
 
     rc = MQTTAsync_create(&client, hostString, "BPQ", MQTTCLIENT_PERSISTENCE_NONE, NULL);
 
@@ -37,8 +37,8 @@ int MQTTConnect(char * Host, int Port, char * User, char * Pass)
 
     conn_opts.keepAliveInterval = 20;
     conn_opts.cleansession = 1;
-    conn_opts.username = User;
-    conn_opts.password = Pass;
+    conn_opts.username = user;
+    conn_opts.password = pass;
     conn_opts.onSuccess = onConnect;
     conn_opts.onFailure = onConnectFailure;
 

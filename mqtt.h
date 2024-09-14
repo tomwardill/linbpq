@@ -1,2 +1,2 @@
-int MQTTConnect(char * Host, int Port, char * User, char * Pass);
-int MQTTSubscribe(char * Topic);
+int MQTTConnect(char* host, int port, char* user, char* pass);
+

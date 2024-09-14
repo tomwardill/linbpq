@@ -20,4 +20,5 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
      libminiupnpc17 \
      libconfig-dev \
      libpcap-dev \
-     libpaho-mqtt-dev
+     libpaho-mqtt-dev \
+     inetutils-telnet
