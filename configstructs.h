@@ -16,23 +16,23 @@ struct PORTCONFIG
 	unsigned short SPEED;	// 40,
 	unsigned char CHANNEL;	// 42,
 	unsigned char pad;
-	short BBSFLAG;			// 44, 
-	short QUALITY;			// 46, 
+	short BBSFLAG;			// 44,
+	short QUALITY;			// 46,
 	short MAXFRAME;			// 48,
 	short TXDELAY;			// 50,
-	short SLOTTIME;			// 52, 
+	short SLOTTIME;			// 52,
 	short PERSIST;			// 54,
 
 	short FULLDUP;			// 56,
-	short SOFTDCD;			// 58, 
-	short FRACK;			// 60, 
+	short SOFTDCD;			// 58,
+	short FRACK;			// 60,
 	short RESPTIME;			// 62,
-	short RETRIES;			// 64, 
+	short RETRIES;			// 64,
 
 	short PACLEN;			// 66,
 	short QUALADJUST;		// 68,
 	UCHAR DIGIFLAG;			// 70,
-	UCHAR DIGIPORT;			// 71 
+	UCHAR DIGIPORT;			// 71
 	short DIGIMASK;			// 72
 	short USERS;			// 74,
 	short TXTAIL;			// 76
@@ -49,12 +49,12 @@ struct PORTCONFIG
 	short TXPORT;			// 118,
 	UCHAR MHEARD;			// 120,
 	UCHAR CWIDTYPE;			// 121,
-	char MINQUAL;			// 122, 
+	char MINQUAL;			// 122,
 	char MAXDIGIS;			//  123,
 	char DefaultNoKeepAlives; // 124
 	char UIONLY;			// 125,
 	unsigned short ListenPort;	// 126
-	char UNPROTO[72];		//  128, 
+	char UNPROTO[72];		//  128,
 	char PORTALIAS2[10];	//  200,
 	char DLLNAME[16];		//  210,
 	char BCALL[10];			// 226,
@@ -69,11 +69,11 @@ struct PORTCONFIG
 	struct WL2KInfo * WL2K;			// 512
 	char SerialPortName[80]; // 516
 	struct XDIGI * XDIGIS;	//  596 Cross port digi setup
-	int RIGPORT;			// Linked port with RigControl 
+	int RIGPORT;			// Linked port with RigControl
 	unsigned int PERMITTEDAPPLS;	// Appls allowed on this port
 	int HavePermittedAppls;			// Indicated PERMITTEDAPPLS uses
 	int Hide;				// Don't show on Ports display or AGW Connect Menu
-//	long long txOffset;		// Transverter tx offset 
+//	long long txOffset;		// Transverter tx offset
 //	long long rxOffset;		// Transverter rx offset ppa
 	int SmartID;
 	unsigned char * KissParams;
@@ -100,7 +100,7 @@ struct CONFIGTABLE
 
 //	DEFINES LAYOUT OF CONFIG RECORD PRODUCED BY CONFIGURATION PROG
 
-	char C_NODECALL[10];		// OFFSET = 0 
+	char C_NODECALL[10];		// OFFSET = 0
 	char C_NODEALIAS[10];		// OFFSET = 10
 	char C_BBSCALL[10];			// OFFSET = 20
 	char C_BBSALIAS[10];		// OFFSET = 30
@@ -151,7 +151,7 @@ struct CONFIGTABLE
 	char C_VERSTRING[10];		// 241 Version String from Config File
 	UCHAR C_ADIF;
 	UCHAR C_EVENTS;
-	UCHAR C_LogAllConnects;	
+	UCHAR C_LogAllConnects;
 	UCHAR C_SaveAPRSMsgs;
 	UCHAR C_M0LTEMap;
 	UCHAR C_VERSION;			// CONFIG PROG VERSION
@@ -165,12 +165,17 @@ struct CONFIGTABLE
 	struct ROUTECONFIG C_ROUTE[MaxLockedRoutes];
 	struct APPLCONFIG C_APPL[NumberofAppls];
 	struct PORTCONFIG C_PORT[MaxBPQPortNo + 4];
+	int C_MQTT;
+	char C_MQTT_HOST[80];
+	int C_MQTT_PORT;
+	char C_MQTT_USER[80];
+	char C_MQTT_PASS[80];
 
 //#define ApplOffset 80000			// Applications offset in config buffer
 //#define InfoOffset 85000			// Infomsg offset in  buffer
 //#define InfoMax	2000				// Max Info
 
-//#define C_IDMSG	512 
+//#define C_IDMSG	512
 //#define C_ROUTES 90000				// Allow 2500
 //#define C_CTEXT	2048
 //#define C_PORTS	2560
@@ -178,7 +183,7 @@ struct CONFIGTABLE
 
 };
 
-struct UPNP 
+struct UPNP
 {
 	struct UPNP * Next;
 	char * Protocol;
