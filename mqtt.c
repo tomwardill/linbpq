@@ -1,30 +1,55 @@
-#include "mqtt.h"
+
 #include "MQTTAsync.h"
+
+#include "CHeaders.h"
+#include "mqtt.h"
 
 MQTTAsync client;
 
-void onConnect(void* context, MQTTAsync_successData* response)
+void onConnect(void *context, MQTTAsync_successData *response)
 {
-        MQTTAsync client = (MQTTAsync)context;
-        MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
-        MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
-        int rc;
+    MQTTAsync client = (MQTTAsync)context;
+    MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
+    MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
+    int rc;
 
-        printf("Successful MQTT connection\n");
+    printf("Successful MQTT connection\n");
 }
 
-void onConnectFailure(void* context, MQTTAsync_failureData* response)
+void onConnectFailure(void *context, MQTTAsync_failureData *response)
 {
-        printf("MQTT connection failed, rc %d\n", response ? response->code : 0);
+    printf("MQTT connection failed, rc %d\n", response ? response->code : 0);
 }
 
+int MQTTPublish(void *message)
+{
+    MESSAGE *msg = (MESSAGE *)message;
+    char From[10];
+    char To[10];
 
-int MQTTConnect(char* host, int port, char* user, char* pass)
+    char buffer[1024];
+
+    From[ConvFromAX25(msg->ORIGIN, From)] = 0;
+    To[ConvFromAX25(msg->DEST, To)] = 0;
+
+    MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
+    MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
+
+    pubmsg.payload = "ohai";
+    pubmsg.payloadlen = (int)strlen("ohai ");
+
+    char *topic;
+    asprintf(&topic, "BPQ/%s/%s", From, To);
+
+    MQTTAsync_sendMessage(client, topic, &pubmsg, &opts);
+}
+
+int MQTTConnect(char *host, int port, char *user, char *pass)
 {
     MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer;
     int rc;
 
-    char* hostString;
+    char *hostString;
     asprintf(&hostString, "tcp://%s:%d", host, port);
 
     rc = MQTTAsync_create(&client, hostString, "BPQ", MQTTCLIENT_PERSISTENCE_NONE, NULL);

@@ -389,6 +389,11 @@ VOID EXTTX(PEXTPORTDATA PORTVEC, MESSAGE * Buffer)
 
 	C_Q_ADD(&TRACE_Q, Buffer);
 
+	if (MQTT)
+	{
+		MQTTPublish(Buffer);
+	}
+
 	return;
 
 }
