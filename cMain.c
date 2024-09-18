@@ -474,6 +474,11 @@ Loop:
 
 	C_Q_ADD(&PORT->PORTRX_Q, (UINT *)Message);
 
+	if (MQTT)
+	{
+		MQTTPublish(Message);
+	}
+
 	goto Loop;
 
 	return;
