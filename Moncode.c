@@ -210,12 +210,16 @@ KC6OAR*>ID:
 	Port &= 0x7F;
 
 	if ((((uint64_t)1 << (Port - 1)) & Mask) == 0)		// Check MMASK
+<<<<<<< HEAD
 	{
 		if (msg->Padding[0] == '[')
 			msg->Padding[0] = 0;
 
 		return 0;
 	}
+=======
+		return 0;
+>>>>>>> 8c207d4 (Revert "Extract packet contents monitoring output to method")
 	
 
 	// We now pass Text format monitoring from non-ax25 drivers through this code
@@ -540,12 +544,15 @@ KC6OAR*>ID:
 			}	
 		}
 	}
+<<<<<<< HEAD
 
 	if (msg->Padding[0] == '[')
 		Output += sprintf((char *)Output, " %s", msg->Padding);
 
 	msg->Padding[0] = 0;
 
+=======
+>>>>>>> 8c207d4 (Revert "Extract packet contents monitoring output to method")
 	if (Info)
 	{
 		// We have an info frame
