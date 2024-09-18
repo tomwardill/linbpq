@@ -35,11 +35,21 @@ int MQTTPublish(void *message)
     MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
     MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
 
-    pubmsg.payload = "ohai";
-    pubmsg.payloadlen = (int)strlen("ohai ");
+    time_t timestamp = msg->Timestamp;
+
+    unsigned long long SaveMMASK = MMASK;
+    BOOL SaveMTX = MTX;
+    BOOL SaveMCOM = MCOM;
+    BOOL SaveMUI = MUIONLY;
+
+    IntSetTraceOptionsEx(8, TRUE, TRUE, FALSE);
+    int len = IntDecodeFrame(msg, buffer, timestamp, 8, FALSE, FALSE);
+    IntSetTraceOptionsEx(SaveMMASK, SaveMTX, SaveMCOM, SaveMUI);
+    pubmsg.payload = buffer;
+    pubmsg.payloadlen = len;
 
     char *topic;
-    asprintf(&topic, "BPQ/%s/%s", From, To);
+    asprintf(&topic, "BPQ/%d/%s/%s", msg->PORT, From, To);
 
     MQTTAsync_sendMessage(client, topic, &pubmsg, &opts);
 }
