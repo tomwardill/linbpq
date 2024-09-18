@@ -389,11 +389,6 @@ VOID EXTTX(PEXTPORTDATA PORTVEC, MESSAGE * Buffer)
 
 	C_Q_ADD(&TRACE_Q, Buffer);
 
-	if (MQTT)
-	{
-		MQTTPublish(Buffer);
-	}
-
 	return;
 
 }
@@ -2233,6 +2228,9 @@ L2Packet:
 			time(&Message->Timestamp);
 
 			Message->PORT = CURRENTPORT;
+			if (MQTT && PORT->PROTOCOL == 0) {
+				MQTTKISSRX(Buffer);
+			}
 
 			// Bridge if requested
 
@@ -2266,7 +2264,6 @@ L2Packet:
 			}
 
 			L2Routine(PORT, Buffer);
-
 			Buffer = (PMESSAGE)Q_REM((void *)&PORT->PORTRX_Q);
 			continue;
 		}

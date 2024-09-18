@@ -25,7 +25,7 @@ int GetListeningPortsPID(int Port);
 void * InitializeExtDriver(PEXTPORTDATA PORTVEC);
 
 VOID PutLengthinBuffer(PDATAMESSAGE buff, USHORT datalen);			// Needed for arm5 portability
-int GetLengthfromBuffer(PDATAMESSAGE buff);	
+int GetLengthfromBuffer(PDATAMESSAGE buff);
 int IntDecodeFrame(MESSAGE * msg, char * buffer, time_t Stamp, uint64_t Mask, BOOL APRS, BOOL MCTL);
 int IntSetTraceOptionsEx(uint64_t mask, int mtxparam, int mcomparam, int monUIOnly);
 int CountBits64(uint64_t in);
@@ -239,7 +239,7 @@ extern int  DEST_LIST_LEN;
 extern int  MAXDESTS;			// MAX NODES IN SYSTEM
 
 extern struct _LINKTABLE * LINKS;
-extern int	LINK_TABLE_LEN; 
+extern int	LINK_TABLE_LEN;
 extern int	MAXLINKS;
 
 
@@ -277,12 +277,12 @@ extern int PACLEN;				//MAX PACKET SIZE
 
 extern int T3;				// LINK VALIDATION TIMER (3 MINS) (+ a bit to reduce RR collisions)
 
-extern int L2KILLTIME;		// IDLE LINK TIMER (16 MINS)	
+extern int L2KILLTIME;		// IDLE LINK TIMER (16 MINS)
 extern int L3LIVES;				// MAX L3 HOPS
 extern int L4N2;					// LEVEL 4 RETRY COUNT
 extern int L4LIMIT;			// IDLE SESSION LIMIT - 15 MINS
 extern int L4DELAY;				// L4 DELAYED ACK TIMER
-	
+
 extern int BBS;					// INCLUDE BBS SUPPORT
 extern int NODE;					// INCLUDE SWITCH SUPPORT
 
@@ -371,7 +371,7 @@ extern UCHAR BPQDirectory[];
 extern UCHAR BPQProgramDirectory[];
 
 extern UCHAR WINMOR[];
-extern UCHAR PACTORCALL[]; 
+extern UCHAR PACTORCALL[];
 
 extern UCHAR MCOM;
 extern UCHAR MUIONLY;
@@ -426,5 +426,11 @@ extern char Message[MaxBPQPortNo + 1][1000];		// Beacon Text
 
 extern int MinCounter[MaxBPQPortNo + 1];			// Interval Countdown
 extern BOOL SendFromFile[MaxBPQPortNo + 1];
+
+extern BOOL MQTT;
+extern char MQTT_HOST[80];
+extern int MQTT_PORT;
+extern char MQTT_USER[80];
+extern char MQTT_PASS[80];
 
 DllExport uint64_t APIENTRY GetPortFrequency(int PortNo, char * FreqStringMhz);
