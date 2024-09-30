@@ -9,7 +9,14 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/linbpq",
-            "args": [],
+            "args": [
+                "-c",
+                "/etc",
+                "-d",
+                "/opt/oarc/bpq",
+                "-l",
+                "/opt/oarc/bpq"
+            ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],

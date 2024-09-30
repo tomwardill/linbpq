@@ -389,11 +389,6 @@ VOID EXTTX(PEXTPORTDATA PORTVEC, MESSAGE * Buffer)
 
 	C_Q_ADD(&TRACE_Q, Buffer);
 
-	if (MQTT)
-	{
-		MQTTPublish(Buffer);
-	}
-
 	return;
 
 }
@@ -473,11 +468,6 @@ Loop:
 	}
 
 	C_Q_ADD(&PORT->PORTRX_Q, (UINT *)Message);
-
-	if (MQTT)
-	{
-		MQTTPublish(Message);
-	}
 
 	goto Loop;
 
@@ -2324,6 +2314,9 @@ L2Packet:
 				OutOctets[PORT->PORTNUMBER] += Buffer->LENGTH - MSGHDDRLEN;
 
 				PORT->PORTTXROUTINE(PORT, Buffer);
+				if (MQTT) {
+					MQTTKISSTX(Buffer);
+				}
 				Sent++;
 
 				continue;

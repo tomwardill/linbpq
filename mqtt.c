@@ -8,12 +8,19 @@ MQTTAsync client;
 
 void onConnect(void *context, MQTTAsync_successData *response)
 {
-    MQTTAsync client = (MQTTAsync)context;
     MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
     MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
     int rc;
 
     printf("Successful MQTT connection\n");
+
+    // Send start up message
+    char *topic;
+    asprintf(&topic, "PACKETNODE/%s", MYALIASTEXT);
+    pubmsg.payload = "{\"status\":\"online\"}";
+    pubmsg.payloadlen = strlen(pubmsg.payload);
+
+    MQTTAsync_sendMessage(client, topic, &pubmsg, &opts);
 }
 
 void onConnectFailure(void *context, MQTTAsync_failureData *response)
@@ -21,7 +28,23 @@ void onConnectFailure(void *context, MQTTAsync_failureData *response)
     printf("MQTT connection failed, rc %d\n", response ? response->code : 0);
 }
 
-int MQTTPublish(void *message)
+void MQTTKISSTX(void *message)
+{
+    MESSAGE *msg = (MESSAGE *)message;
+    char *topic;
+    asprintf(&topic, "PACKETNODE/kiss/%s/sent/%d", MYALIASTEXT, msg->PORT);
+    MQTTPublish((void *)msg, topic);
+}
+
+void MQTTKISSRX(void *message)
+{
+    MESSAGE *msg = (MESSAGE *)message;
+    char *topic;
+    asprintf(&topic, "PACKETNODE/kiss/%s/rcvd/%d", MYALIASTEXT, msg->PORT);
+    MQTTPublish((void *)msg, topic);
+}
+
+int MQTTPublish(void *message, char *topic)
 {
     MESSAGE *msg = (MESSAGE *)message;
     char From[10];
@@ -43,13 +66,10 @@ int MQTTPublish(void *message)
     BOOL SaveMUI = MUIONLY;
 
     IntSetTraceOptionsEx(8, TRUE, TRUE, FALSE);
-    int len = IntDecodeFrame(msg, buffer, timestamp, 8, FALSE, FALSE);
+    int len = IntDecodeFrame(msg, buffer, timestamp, 1, FALSE, FALSE);
     IntSetTraceOptionsEx(SaveMMASK, SaveMTX, SaveMCOM, SaveMUI);
     pubmsg.payload = buffer;
     pubmsg.payloadlen = len;
-
-    char *topic;
-    asprintf(&topic, "BPQ/%d/%s/%s", msg->PORT, From, To);
 
     MQTTAsync_sendMessage(client, topic, &pubmsg, &opts);
 }
