@@ -2228,6 +2228,9 @@ L2Packet:
 			time(&Message->Timestamp);
 
 			Message->PORT = CURRENTPORT;
+			if (MQTT && PORT->PROTOCOL == 0) {
+				MQTTKISSRX(Buffer);
+			}
 
 			// Bridge if requested
 
@@ -2261,7 +2264,6 @@ L2Packet:
 			}
 
 			L2Routine(PORT, Buffer);
-
 			Buffer = (PMESSAGE)Q_REM((void *)&PORT->PORTRX_Q);
 			continue;
 		}
@@ -2314,9 +2316,6 @@ L2Packet:
 				OutOctets[PORT->PORTNUMBER] += Buffer->LENGTH - MSGHDDRLEN;
 
 				PORT->PORTTXROUTINE(PORT, Buffer);
-				if (MQTT) {
-					MQTTKISSTX(Buffer);
-				}
 				Sent++;
 
 				continue;

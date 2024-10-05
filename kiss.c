@@ -78,6 +78,7 @@ int i2c_smbus_read_byte()
 
 
 #include "CHeaders.h"
+#include "mqtt.h"
 #include "kiss.h"
 
 int i2cPoll(struct PORTCONTROL * PORT, NPASYINFO npKISSINFO);
@@ -994,6 +995,10 @@ DONTCHECKDCD:
 */
 
 	SENDFRAME(KISS, Buffer);
+
+	if (MQTT) {
+		MQTTKISSTX(Buffer);
+	}
 }
 
 VOID SENDFRAME(struct KISSINFO * KISS, PMESSAGE Buffer)
@@ -1432,6 +1437,10 @@ SeeifMore:
 			C_Q_ADD(&PORT->PORTRX_Q, (UINT *)Buffer);
 		}
 
+		if (MQTT) {
+			MQTTKISSRX(Buffer);
+		}
+
 		return 0;
 	}
 
@@ -1739,6 +1748,7 @@ SeeifMore:
 		}
 		else
 */
+
 		C_Q_ADD(&KISS->PORT.PORTRX_Q, (UINT *)Buffer);
 	}
 
