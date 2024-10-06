@@ -3,6 +3,7 @@
 #include <jansson.h>
 
 #include "CHeaders.h"
+#include "asmstrucs.h"
 #include "mqtt.h"
 
 MQTTAsync client;
@@ -77,7 +78,7 @@ void MQTTKISSTX(void *message)
 	if (ptr) *(ptr) = 0;
 
     char *topic;
-    asprintf(&topic, "PACKETNODE/kiss/%s/sent/%d", NodeCall, msg->PORT);
+    asprintf(&topic, "PACKETNODE/ax25/trace/bpqformat/%s/sent/%d", NodeCall, msg->PORT);
 
     char *msg_str = jsonEncodeMessage(msg);
 
@@ -87,7 +88,28 @@ void MQTTKISSTX(void *message)
     pubmsg.payload = msg_str;
     pubmsg.payloadlen = strlen(msg_str);
 
-    printf("%s\n", msg_str);
+    MQTTAsync_sendMessage(client, topic, &pubmsg, &opts);
+}
+
+void MQTTKISSTX_RAW(char* buffer, int bufferLength, void* PORT) {
+    PPORTCONTROL PPORT = (PPORTCONTROL)PORT;
+    char NodeCall[11];
+    char * ptr;
+    memcpy(NodeCall, MYNODECALL, 10);
+
+    ptr=strchr(NodeCall, ' ');
+    if (ptr) *(ptr) = 0;
+
+    char *topic;
+    asprintf(&topic, "PACKETNODE/kiss/%s/sent/%d", NodeCall, PPORT->PORTNUMBER);
+
+    MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
+    MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
+
+    // This can container null, so we need to know
+    // the exact length of the buffer
+    pubmsg.payload = buffer;
+    pubmsg.payloadlen = bufferLength;
 
     MQTTAsync_sendMessage(client, topic, &pubmsg, &opts);
 }
@@ -103,7 +125,7 @@ void MQTTKISSRX(void *message)
 	ptr=strchr(NodeCall, ' ');
 	if (ptr) *(ptr) = 0;
     char *topic;
-    asprintf(&topic, "PACKETNODE/kiss/%s/rcvd/%d", NodeCall, msg->PORT);
+    asprintf(&topic, "PACKETNODE/ax25/trace/bpqformat/%s/rcvd/%d", NodeCall, msg->PORT);
     char *msg_str = jsonEncodeMessage(msg);
 
     MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
@@ -112,7 +134,28 @@ void MQTTKISSRX(void *message)
     pubmsg.payload = msg_str;
     pubmsg.payloadlen = strlen(msg_str);
 
-    printf("%s\n", msg_str);
+    MQTTAsync_sendMessage(client, topic, &pubmsg, &opts);
+}
+
+void MQTTKISSRX_RAW(char* buffer, int bufferLength, void* PORT) {
+    PPORTCONTROL PPORT = (PPORTCONTROL)PORT;
+    char NodeCall[11];
+    char * ptr;
+    memcpy(NodeCall, MYNODECALL, 10);
+
+    ptr=strchr(NodeCall, ' ');
+    if (ptr) *(ptr) = 0;
+
+    char *topic;
+    asprintf(&topic, "PACKETNODE/kiss/%s/rcvd/%d", NodeCall, PPORT->PORTNUMBER);
+
+    MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
+    MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
+
+    // This can container null, so we need to know
+    // the exact length of the buffer
+    pubmsg.payload = buffer;
+    pubmsg.payloadlen = bufferLength;
 
     MQTTAsync_sendMessage(client, topic, &pubmsg, &opts);
 }

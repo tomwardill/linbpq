@@ -1185,6 +1185,10 @@ VOID SENDFRAME(struct KISSINFO * KISS, PMESSAGE Buffer)
 
 	ASYSEND(PORT, ENCBUFF, (int)(ptr2 - (char *)ENCBUFF));
 
+	if (MQTT) {
+		MQTTKISSTX_RAW((char *)ENCBUFF, (int)(ptr2 - (char *)ENCBUFF), PORT);
+	}
+
 	// Pass buffer to trace routines
 
 	C_Q_ADD(&TRACE_Q, Buffer);
@@ -1435,10 +1439,6 @@ SeeifMore:
 			PutLengthinBuffer((PDATAMESSAGE)Buffer, len);
 
 			C_Q_ADD(&PORT->PORTRX_Q, (UINT *)Buffer);
-		}
-
-		if (MQTT) {
-			MQTTKISSRX(Buffer);
 		}
 
 		return 0;
@@ -1748,6 +1748,8 @@ SeeifMore:
 		}
 		else
 */
+
+		MQTTKISSRX_RAW(Buffer, len, PORT);
 
 		C_Q_ADD(&KISS->PORT.PORTRX_Q, (UINT *)Buffer);
 	}
