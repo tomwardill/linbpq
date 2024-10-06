@@ -1022,6 +1022,11 @@ static size_t ExtProc(int fn, int port, PDATAMESSAGE buff)
 		}
 
 		TelnetPoll(port);
+		/*
+		if (MQTT) {
+			printf("MQTT Poll\n");
+		}
+		*/
 
 		for (Stream = 0; Stream <= MaxStreams; Stream++)
 		{
@@ -4677,7 +4682,7 @@ MsgLoop:
 
 		if (strstr(MsgPtr, "Password :")) 
 		{
-			// Send “CMSTelnet” + gateway callsign + frequency + emission type if info is available
+			// Send ï¿½CMSTelnetï¿½ + gateway callsign + frequency + emission type if info is available
 
 			TRANSPORTENTRY * Sess1 = TNC->PortRecord->ATTACHEDSESSIONS[Stream];
 			TRANSPORTENTRY * Sess2 = NULL;

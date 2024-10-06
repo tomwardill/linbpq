@@ -28,6 +28,7 @@ along with LinBPQ/BPQ32.  If not, see http://www.gnu.org/licenses
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "mqtt.h"
 
 #pragma data_seg("_BPQDATA")
 
@@ -39,6 +40,7 @@ extern struct CONFIGTABLE xxcfg;
 
 #define LIBCONFIG_STATIC
 #include "libconfig.h"
+
 
 #ifndef LINBPQ
 
@@ -3716,6 +3718,10 @@ VOID OpenReportingSockets()
 	Chatreportdest.sin_port = htons(81);
 
 	_beginthread(ResolveUpdateThread, 0, NULL);
+
+	if (xxcfg.C_MQTT) {
+		MQTTConnect(xxcfg.C_MQTT_HOST, xxcfg.C_MQTT_PORT, xxcfg.C_MQTT_USER, xxcfg.C_MQTT_PASS);
+	}
 }
 
 VOID WriteMiniDumpThread();
