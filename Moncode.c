@@ -218,6 +218,7 @@ KC6OAR*>ID:
 	}
 	
 
+
 	// We now pass Text format monitoring from non-ax25 drivers through this code
 	// As a valid ax.25 address must have bottom bit set flag plain text messages
 	// with hex 01.
