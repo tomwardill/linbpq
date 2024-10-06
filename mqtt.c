@@ -4,6 +4,7 @@
 
 #include "CHeaders.h"
 #include "asmstrucs.h"
+#include "bpqmail.h"
 #include "mqtt.h"
 
 MQTTAsync client;
@@ -242,4 +243,51 @@ int MQTTConnect(char *host, int port, char *user, char *pass)
     }
 
     return 0;
+}
+
+void MQTTMessageEvent(void* message) {
+    struct MsgInfo* msg = (struct MsgInfo *)message;
+
+    json_t *root = json_object();
+    json_object_set_new(root, "id", json_integer(msg->number));
+    json_object_set_new(root, "size", json_integer(msg->length));
+    json_object_set_new(root, "type", json_string(msg->type == 'P' ? "P" : "B"));
+    json_object_set_new(root, "to", json_string(msg->to));
+    json_object_set_new(root, "from", json_string(msg->from));
+    json_object_set_new(root, "subj", json_string(msg->title));
+
+    switch(msg->status) {
+        case 'N':
+            json_object_set_new(root, "event", json_string("newmsg"));
+            break;
+        case 'F':
+            json_object_set_new(root, "event", json_string("fwded"));
+            break;
+        case 'R':
+            json_object_set_new(root, "event", json_string("read"));
+            break;
+        case 'K':
+            json_object_set_new(root, "event", json_string("killed"));
+            break;
+    }
+
+    char *msg_str = json_dumps(root, 0);
+
+    MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
+    MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
+
+    pubmsg.payload = msg_str;
+    pubmsg.payloadlen = strlen(msg_str);
+
+    char NodeCall[11];
+    char * ptr;
+    memcpy(NodeCall, MYNODECALL, 10);
+
+    ptr=strchr(NodeCall, ' ');
+    if (ptr) *(ptr) = 0;
+
+    char *topic;
+    asprintf(&topic, "PACKETNODE/event/%s/pmsg", NodeCall);
+
+    MQTTAsync_sendMessage(client, topic, &pubmsg, &opts);
 }
