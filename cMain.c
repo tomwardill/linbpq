@@ -142,6 +142,11 @@ extern UCHAR LogDirectory[260];
 extern BOOL EventsEnabled;
 extern BOOL SaveAPRSMsgs;
 BOOL M0LTEMap = FALSE;
+BOOL MQTT = FALSE;
+char MQTT_HOST[80] = "";
+int MQTT_PORT = 0;
+char MQTT_USER[80] = "";
+char MQTT_PASS[80] = "";
 
 //TNCTABLE	DD	0
 //NUMBEROFSTREAMS	DD	0
@@ -793,6 +798,11 @@ BOOL Start()
 	EventsEnabled = cfg->C_EVENTS;
 	SaveAPRSMsgs = cfg->C_SaveAPRSMsgs;
 	M0LTEMap = cfg->C_M0LTEMap;
+	MQTT = cfg->C_MQTT;
+	strcpy(MQTT_HOST, cfg->C_MQTT_HOST);
+	MQTT_PORT = cfg->C_MQTT_PORT;
+	strcpy(MQTT_USER, cfg->C_MQTT_USER);
+	strcpy(MQTT_PASS, cfg->C_MQTT_PASS);
 
 
 	// Get pointers to PASSWORD and APPL1 commands
