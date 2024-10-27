@@ -3683,7 +3683,7 @@ char * BuildB2Header(WebMailInfo * WebMail, struct MsgInfo * Msg, char ** ToCall
 {
 	// Create B2 Header
 	
-	char * NewMsg = malloc(100000);
+	char * NewMsg = malloc(1000000);
 	char * SaveMsg = NewMsg;
 	char DateString[80];
 	struct tm * tm;
@@ -4930,7 +4930,7 @@ VOID BuildXMLAttachment(struct HTTPConnectionInfo * Session, char * Keys[1000], 
 	XMLName[strlen(XMLName) - 5] = 0;	// remove .html
 
 	WebMail->XMLName = malloc(MAX_PATH);
-	WebMail->XML = XMLPtr = malloc(100000);
+	WebMail->XML = XMLPtr = malloc(1000000);
 	WebMail->XMLLen = 0;
 
 	sprintf(WebMail->XMLName, "RMS_Express_Form_%s.xml", XMLName);
@@ -4981,7 +4981,7 @@ char * BuildFormMessage(struct HTTPConnectionInfo * Session, struct MsgInfo * Ms
 
 	// Create B2 message with template body and xml attachment
 
-	char * NewMsg = malloc(100000);
+	char * NewMsg = malloc(1000000);
 	char * SaveMsg = NewMsg;
 	char * XMLPtr;
 
@@ -5013,7 +5013,7 @@ char * BuildFormMessage(struct HTTPConnectionInfo * Session, struct MsgInfo * Ms
 		XMLName[strlen(XMLName) - 5] = 0;	// remove .html
 
 		FileName[0] = malloc(MAX_PATH);
-		FileBody[0] = malloc(100000);
+		FileBody[0] = malloc(1000000);
 		Files = 1;
 		FileLen[0] = 0;
 
@@ -6159,7 +6159,7 @@ VOID getAttachmentList(struct HTTPConnectionInfo * Session, char * Reply, int * 
 
 	for (i = 0; i < WebMail->Files; i++)
 	{
-		if(WebMail->FileLen[i] < 100000)
+		if(WebMail->FileLen[i] < 1000000)
 			sprintf(popup, "%s <option value=%d>%s (Len %d)", popup, i + 1, WebMail->FileName[i], WebMail->FileLen[i]);
 	}
 
